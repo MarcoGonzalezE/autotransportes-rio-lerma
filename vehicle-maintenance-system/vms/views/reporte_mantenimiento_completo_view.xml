@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="reporte_mantenimiento_view_form" model="ir.ui.view">
+        <field name="name">reporte.mantenimiento.view.form</field>
+        <field name="model">reporte.mantenimiento</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de Mantenimiento">
+                <group>
+                    <field name="reporte" string="Numero de Reporte"/>
+                </group>
+                <footer>
+
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_reporte_mantenimiento" model="ir.actions.act_window">
+        <field name="name">Reporte</field>
+        <field name="res_model">reporte.mantenimiento</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="reporte_mantenimiento_view_form"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem action="action_reporte_mantenimiento" id="reporte_menu" parent="menu_vms" sequence="101"/>
+
+
+
+
+
+
+
+
+    <data>
+        <report id="report_rm_full" string="Reporte Completo de Mantenimiento" model="vms.report" report_type="qweb-pdf" name="vms.report_rm_full_document"/>
+        <template id="report_rm_full_document">
+         <t t-call="report.html_container">
+            <t t-call="report.external_layout">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <table style="width:100%;">
+                            <tr>
+                               <th>
+    <!-- REPORTE DE MANTENIMIENTO-->
+                                    <h3 align="center" style="color:white; background-color:#083464;">Reporte de Mantenimiento
+                                        <strong><p align="center" style="color:white; background-color:#083464;" t-esc="o.name"/></strong>
+                                    </h3>
+                                </th>
+                            </tr>
+                        </table>
+                        <div class="row">
+                        <style>
+                        th, td{
+                        padding: 5px;
+                        }
+                        strong{
+                        font-size:125%
+                        }
+                        </style>
+                        <table style="width:100%;">
+                            <thead>
+                                <td style="width:100%;" colspan="4">
+                                    <h3 style="color:#083464;">Detalles</h3>
+                                    <hr/>
+                                </td>
+                                <tr>
+                                    <th>Base</th>
+                                    <td><span t-esc="o.operating_unit_id.name"/></td>
+                                    <th>Fecha</th>
+                                    <td><span t-esc="o.date"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Unidad</th>
+                                    <td><span t-esc="o.unit_id.name"/></td>
+                                    <th>Conductor</th>
+                                    <td><span t-esc="o.employee_id.name"/></td>
+                                </tr>
+                                <td style="width:100%; " colspan="4">
+                                    <h3 style="color:#083464;">Notas</h3>
+                                    <hr/>
+                                </td>
+                                <tr>
+                                    <td style="width:100%;" colspan="4">
+                                        <span t-esc="o.notes"/>
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
+                        <hr/>
+    <!--SERVICIO-->
+                        <h3 style="color:white; background-color:#083464; padding: 2px;" >Reporte de Servicio
+                            <strong><p t-esc="o.order_id.name"/></strong>
+                        </h3>
+                        <t t-foreach="o.order_id" t-as="order">
+                            <table style="width:100%;">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Almacén</th>
+                                    <th>Supervisor</th>
+                                </tr>
+                                <tr>
+                                    <td><span t-field="order.date"/></td>
+                                    <td><span t-field="order.warehouse_id.name"/></td>
+                                    <td><span t-field="order.supervisor_id"/></td>
+                                    <td><span t-field="order.state"/></td>
+                                </tr>
+                            </table>
+                            <h4 style="color:#083464;">Tiempos</h4>
+                            <hr/>
+                            <table style="width:100%">
+                               <thead>
+                                   <tr>
+                                       <th>Incio Programado</th>
+                                       <td><span t-esc="order.start_date"/></td>
+                                       <th>Fecha de Inicio Real</th>
+                                       <td><span t-esc="order.start_date_real"/></td>
+                                   </tr>
+                                   <tr>
+                                       <th>Fin Programado</th>
+                                       <td><span t-esc="order.end_date"/></td>
+                                       <th>Fecha de Terminacion Real</th>
+                                       <td><span t-esc="order.end_date_real"/></td>
+                                   </tr>
+                               </thead>
+                            </table>
+                            <H4 style="color:#083464;">Tareas</H4>
+                            <hr/>
+                            <table style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Tarea</th>
+                                        <th>Duración</th>
+                                        <th>Duración Real</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="order.order_line_ids" t-as="line">
+                                        <tr>
+                                            <td><span t-field="line.task_id.name"/></td>
+                                            <td><span t-field="line.duration"/></td>
+                                            <td><span t-field="line.real_duration"/></td>
+                                            <td><span t-field="line.state"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+    <!--COMPRAS-->
+                            <hr/>
+                            <h3 style="color:white; background-color:#083464; padding: 2px;">Compras</h3>
+                            <t t-foreach="order.compras_ids" t-as="compra">
+                                <t t-foreach="compra.order_line" t-as="lineas">
+                                    <table style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Pedido</th>
+                                                <th>Proveedor</th>
+                                                <th>Refacciones</th>
+                                                <th>Cantitad</th>
+                                                <th>Costo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><span t-field="compra.name"/></td>
+                                                <td><span t-field="compra.partner_id.name"/></td>
+                                                <td><span t-field="lineas.product_id.name"/></td>
+                                                <td><span t-field="lineas.product_qty"/></td>
+                                                <td><span t-field="lineas.price_subtotal"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </t>
+                            </t>
+                        </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+         </t>
+        </template>
+    </data>
+</odoo>

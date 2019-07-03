@@ -85,6 +85,13 @@ class VmsOrder(models.Model):
         string='Procurement Group',
         readonly=True,
         copy=False,)
+    compras_ids = fields.One2many(
+        'purchase.order','origen',
+        string='Compra(s)')
+
+    #@api.multi
+    #def _compute_compras(self):
+    #    self.compras_ids = self.env['purchase.order'].search('origen','=', self.id)
 
     @api.multi
     @api.depends('procurement_group_id')

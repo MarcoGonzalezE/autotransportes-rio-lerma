@@ -34,7 +34,7 @@ class VmsReport(models.Model):
          ('closed', 'Closed'),
          ('cancel', 'Cancel')],
         default='pending')
-    notes = fields.Html()
+    notes = fields.Text()
 
     @api.model
     def create(self, values):

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<!-- @Autor Marco Gonzalez -->
+<!-- Campo Orden de Servicio en la Compra -->
+     <record id="view_purchase_order_form" model="ir.ui.view">
+        <field name="name">purchase_order.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+        <field name="date_order" position="after" >
+          <field name="origen" options="{'no_create': True}"/>
+        </field>
+        </field>
+    </record>
+
+
+
+<!-- Reporte de RM -->
+    <data>
+		<report id="report_rm" string="Reporte de Mantenimiento" model="vms.report" report_type="qweb-pdf" name="vms.report_rm_document"/>
+		<template id="report_rm_document">
+			<t t-call="report.html_container">
+				<t t-call="report.external_layout">
+					<t t-foreach="docs" t-as="o">
+						<div class="page">
+							<table style="width:100%;">
+								<tr style="border:1px solid black;">
+									<th>
+										<h3 align="center">Reporte de Mantenimiento
+											<strong><p align="center" t-esc="o.name"/></strong>
+        	                    		</h3>
+									</th>
+								</tr>
+
+							</table>
+								<div class="row">
+									<style>
+										th, td{
+										padding: 5px;
+										}
+										strong{
+										font-size:125%
+										}
+									</style>
+									<table style="width:100%;">
+										<thead>
+											<td style="width:100%;" colspan="4">
+												<h3 style="color:blue;">Detalles</h3>
+												<hr/>
+											</td>
+											<tr>
+												<th>Base</th>
+												<td><span t-esc="o.operating_unit_id.name"/></td>
+												<th>Fecha</th>
+												<td><span t-esc="o.date"/></td>
+											</tr>
+											<tr>
+												<th>Unidad</th>
+												<td><span t-esc="o.unit_id.name"/></td>
+												<th>Conductor</th>
+												<td><span t-esc="o.employee_id.name"/></td>
+											</tr>
+											<tr>
+												<th></th>
+												<td></td>
+												<th>Orden</th>
+												<td><span t-esc="o.order_id.name"/></td>
+											</tr>
+											<td style="width:100%; " colspan="4">
+												<h3 style="color:blue;">Notas</h3>
+												<hr/>
+											</td>
+											<tr>
+												<td style="width:100%;" colspan="4">
+												    <span t-esc="o.notes"/>
+												</td>
+											</tr>
+										</thead>
+									</table>
+								</div>
+						</div>
+					</t>
+				</t>
+			</t>
+		</template>
+
+        <!-- Reporte de Orden de Servicio -->
+        <report id="report_servicio" string="Orden de Servicio" model="vms.order" report_type="qweb-pdf" name="vms.report_servicio_document"/>
+		<template id="report_servicio_document">
+			<t t-call="report.html_container">
+				<t t-call="report.external_layout">
+					<t t-foreach="docs" t-as="o">
+						<div class="page">
+							<h3>Reporte de Servicio <strong><p t-esc="o.name"/></strong>
+                            </h3>
+							<div class="row">
+								<br/>
+								<div>
+									<hr/>
+									<div>
+										<style>
+											th, td{
+											padding: 5px;
+											}
+											strong{
+											font-size:125%
+											}
+										</style>
+										<table style="width:100%">
+											<thead>
+												<tr>
+													<th>Base</th>
+													<td><span t-esc="o.operating_unit_id.name"/></td>
+													<th>Fecha</th>
+													<td><span t-esc="o.date"/></td>
+												</tr>
+												<tr>
+													<th>Unidad</th>
+													<td><span t-esc="o.unit_id.name"/></td>
+													<th>Almacen</th>
+													<td><span t-esc="o.warehouse_id.name"/></td>
+												</tr>
+												<tr>
+													<th>Tipo</th>
+													<td><span t-esc="o.type"/></td>
+													<th>Supervisor</th>
+													<td><span t-esc="o.supervisor_id.name"/></td>
+												</tr>
+											</thead>
+										</table>
+									</div>
+								</div>
+								<h3>Tiempos</h3>
+								<hr/>
+								<table style="width:100%">
+									<thead>
+										<tr>
+											<th>Incio Programado</th>
+											<td><span t-esc="o.start_date"/></td>
+											<th>Fecha de Inicio Real</th>
+											<td><span t-esc="o.start_date_real"/></td>
+										</tr>
+										<tr>
+											<th>Fin Programado</th>
+											<td><span t-esc="o.end_date"/></td>
+											<th>Fecha de Terminacion Real</th>
+											<td><span t-esc="o.end_date_real"/></td>
+										</tr>
+									</thead>
+								</table>
+								<h3>Tareas</h3>
+								<hr/>
+                                    <table style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Tarea</th>
+                                                <th>Duración</th>
+                                                <th>Duración Real</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+											<t t-foreach="o.order_line_ids" t-as="line">
+												<tr>
+                                                    <td><span t-field="line.task_id.name"/></td>
+                                                    <td><span t-field="line.duration"/></td>
+                                                    <td><span t-field="line.real_duration"/></td>
+                                                    <td><span t-field="line.state"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+								<h3>Reportes del Operador Resueltos</h3>
+								<hr/>
+								<table style="width:100%">
+									<thead>
+										<tr>
+											<th>Numero</th>
+                                            <th>Unidad</th>
+                                            <th>Fecha</th>
+                                            <th>Conductor</th>
+                                            <th>Estado</th>
+										</tr>
+									</thead>
+                                    <tbody>
+										<t t-foreach="o.report_ids" t-as="line">
+											<tr>
+                                        	    <td><span t-field="line.name"/></td>
+                                                <td><span t-field="line.unit_id.name"/></td>
+                                                <td><span t-field="line.date"/></td>
+                                                <td><span t-field="line.employee_id.name"/></td>
+                                                <td><span t-field="line.state"/></td>
+                                            </tr>
+										</t>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</t>
+				</t>
+			</t>
+		</template>
+	</data>
+</odoo>

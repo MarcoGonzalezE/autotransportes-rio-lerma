@@ -84,6 +84,9 @@
                                 </tree>
                             </field>
                         </page>
+                        <page string="Compras">
+                            <field name="compras_ids"/>
+                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">

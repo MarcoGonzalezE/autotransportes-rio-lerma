@@ -27,6 +27,8 @@
         'views/vms_cycle_view.xml',
         'views/vms_product_line_view.xml',
         'views/vms_report_view.xml',
+        'views/reporte_mantenimiento.xml',
+        'views/reporte_mantenimiento_completo_view.xml',
         'views/vms_task_view.xml',
         'views/vms_order_line_view.xml',
         'views/vms_order_view.xml',
